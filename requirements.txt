@@ -1,0 +1,17 @@
+﻿# list of Python packages your app needs so Cloud Build/Run can pip install them during deploy
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+langchain-core
+langgraph
+langchain_community
+langchain_chroma
+langchain_mistralai
+mistralai
+mysql-connector-python
+pymysql
+langchain_openai
+langgraph-checkpoint-mysql
+cryptography
+pypdf

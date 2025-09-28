@@ -1,0 +1,11 @@
+========= INSTALL PACKAGES ===========
+pip install chromadb==0.4.24 langchain langchain-chroma
+pip install protobuf==3.20.3
+pip install opentelemetry-proto==1.22.0
+pip install opentelemetry-sdk==1.22.0
+pip install opentelemetry-exporter-otlp-proto-grpc==1.22.0
+pip install grpcio-status==1.51.1
+pip install numpy==1.26.4
+
+
+
