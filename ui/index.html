@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Bank virtual assistant</title>
+    <style>
+        :root { --w: min(800px, 90vw); }
+
+      /* Full-height column layout */
+      .page {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Input row pinned at bottom */
+      .input-row {
+        width: var(--w);
+        margin: 10px auto 16px;
+        display: flex;
+        gap: 10px;
+      }
+
+    .title{
+    width: var(--w);
+    margin: 16px auto 0;
+    text-align: center;
+    font-size: 28px;      /* make it large (try 28–32px) */
+    line-height: 1.2;
+    font-weight: 700;
+    }
+
+    /* Make the textarea fill the row and be taller */
+    #input {
+        flex: 1;
+        height: 140px;           /* taller than rows=3 */
+        font-size: 16px;
+        resize: vertical;        /* let users drag taller if they want */
+    }
+
+    /* Nice sized button */
+    #send {
+        align-self: flex-start;  /* aligns with the top of the textarea */
+        padding: 10px 16px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* Scrollable chat area */
+    #response{
+      width: var(--w);
+      margin: 12px auto 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
+      flex: 1; min-height: 0;
+      overflow-y: auto; overflow-x: hidden;
+      scroll-behavior: smooth;
+      padding: 12px;
+    }
+
+    /* Base bubble (assistant by default) */
+    .msg{
+      align-self: flex-start;    /* left */
+      background: #fff;          /* white */
+      color: #222;
+      padding: 10px 14px;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-width: 80ch;
+      line-height: 1.45;
+      font-size: 17px;
+    }
+    /* User bubble only: right + gray */
+    .msg.user{
+      align-self: flex-end;      /* right */
+      background: #eef3ff;       /* light gray */
+      border-color: #e2e8ff;
+    }
+
+
+    .subtitle{
+      margin-top: 7px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    /* Column that holds the messages */
+    #messages{
+      display: flex;
+      flex-direction: column;
+      gap: 5px;                  /* spacing between bubbles */
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    </style>
+
+  </head>
+  <body>
+    
+    <div class="page">
+        <h1 class="title">ALLIANCE Bank Chat Bot Assistant</h1>
+        <p class="subtitle">You are logged in under account number <strong>3423346</strong>.</p>
+        <div id="response">
+          <div id="messages"></div>
+        </div>
+
+        <div class="input-row">
+        <textarea id="input" placeholder="Type your message"></textarea>
+        <button id="send">Send</button>
+        </div>
+    </div>
+
+
+    <script>
+        //const sessionId = crypto.randomUUID();
+        const chat = document.getElementById("response");
+        const messages = document.getElementById("messages");
+        const input = document.getElementById("input");
+        //const account = document.getElementById("account");
+        const sendBtn = document.getElementById("send");
+
+        function scrollToBottom(smooth = false) {
+            if (smooth && "scrollTo" in chat) {
+            chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
+            } else {
+            chat.scrollTop = chat.scrollHeight;
+            }
+        }
+
+        function appendMsg(role, text){
+            const line = document.createElement("div");
+            // role is "user" or "bot"; we’ll map bot -> assistant for readability
+            const cls = (role === "user") ? "user" : "assistant";
+            line.className = `msg ${cls}`;
+            line.textContent = text;
+            messages.appendChild(line);
+
+            // scroll the pane, not the messages div
+            chat.scrollTop = chat.scrollHeight;
+        }
+                
+        // 1) Default to bottom when the page loads (e.g., if you render history)
+        document.addEventListener("DOMContentLoaded", () => scrollToBottom());
+
+        const KEY = "test_8";
+        let sessionId = sessionStorage.getItem(KEY);
+        if (!sessionId) {
+            sessionId = (crypto?.randomUUID?.() ?? String(Date.now()));
+            sessionStorage.setItem(KEY, sessionId);
+        }
+
+      async function send() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        appendMsg("user", text);  // right-aligned, no background
+
+        // chat.textContent += (chat.textContent ? "\n" : "") + "YOU: " + text;
+        scrollToBottom();           // 2) after user line
+
+        input.value = "";
+        input.focus();
+        sendBtn.disabled = true;
+
+        try {
+          const res = await fetch("/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: sessionId, text })
+          });
+          const data = await res.json();
+          
+          if (data.awaiting_approval) {
+            // chat.textContent += "\nBOT: I need your confirmation to process your request. Please reply 'yes' to agree or 'no' to disagree.\n";
+            appendMsg("bot", "I need your confirmation to process your request. Please reply 'yes' to agree or 'no' to disagree.")
+          } else {
+            // chat.textContent += "\nBOT: " + (data.reply || "(no reply)");
+            appendMsg("bot", data.reply || "(no reply)");
+          }
+          scrollToBottom(true);     // 3) after bot line (smooth)
+        } catch (err) {
+          console.error(err);
+        //   chat.textContent += `\n[ERROR] Failed to reach /send\n`;
+          appendMsg("bot", "[ERROR] Could not reach /send");
+        } finally {
+          sendBtn.disabled = false;
+        }
+      }
+
+      sendBtn.onclick = send;
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          send();
+        }
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        if (!sessionStorage.getItem('greeted')) {
+          appendMsg('assistant', 'Hello! Welcome to ALLIANCE Bank support. How can I assist you today?');
+          sessionStorage.setItem('greeted', '1');
+        }
+      });
+    </script>
+  </body>
+</html>
