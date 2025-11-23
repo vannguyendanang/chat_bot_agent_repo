@@ -183,11 +183,6 @@ class Graph:
         # self.builder.add_node("primary_agent", lambda state: self.primary_agent_node(state))
         self.builder.add_edge(START, "user_info")
 
-        # Flight booking assistant
-        # When the user expresses an intent to update or cancel a flight (for example, "I want to change my flight"), 
-        # the main assistant recognizes this intent and calls the ToFlightBookingAssistant tool. 
-        # When the tool ToFlightBookingAssistant is invoked, LangGraph automatically routes to the "enter_update_flight" node
-        # Func create_entry_node("Flight Booking Assistant", "flight_booking_mode") will return entry_node(state) function
         # Later in LangGraph, entry_node(state) runs and returns a ToolMessage + new dialog_state
         # LangGraph merges update into conversation state
         self.builder.add_node(
