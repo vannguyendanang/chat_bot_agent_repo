@@ -88,13 +88,10 @@ class Graph:
         policy_tool_obj = PDFTool(pdf_files)
         # Load tools
         policy_tool = policy_tool_obj.get_tool()
-        # bank_tool = BankTool().get_tool()
+
         phone_support_obj = SupportPhone()
         phone_support_tool = phone_support_obj.get_tool()  
 
-        # with BankTool() as bt:
-        #     update_bank_account_tool, account_ballance_tool = bt.get_tool()
-        #     bank_tool = [update_bank_account_tool, account_ballance_tool]
         bank_tool_obj = AccountTool()
         update_bank_account_tool, account_ballance_tool = bank_tool_obj.get_tool()
         bank_tool = [update_bank_account_tool, account_ballance_tool]
@@ -103,40 +100,11 @@ class Graph:
         list_transaction_tool, dispute_transaction_tool = transaction_obj.get_tool()
         transaction_tool = [list_transaction_tool, dispute_transaction_tool]
 
-        # tools = [policy_tool, bank_tool]
-
         model = Model()
         llm = model.get_llm()
 
-
         self.primary_assistant_tool = [policy_tool, phone_support_tool]
-        # bank_account_tool = [bank_tool]
-        # tools = self.primary_assistant_tool + [ToBankAccountAssistant]
-        # to_bank_account_assistant_tool = ToBankAccountAssistant()
-        # tools = self.primary_assistant_tool + [to_bank_account_assistant_tool]
-        # tools = self.primary_assistant_tool
-
-
-        # print("=== DEBUGGING TOOLS ===")
-        # for i, tool in enumerate(tools):
-        #     print(f"Tool {i}: {type(tool)}")
-        #     print(f"  Has name: {hasattr(tool, 'name')}")
-        #     print(f"  Has description: {hasattr(tool, 'description')}")
             
-        #     if hasattr(tool, 'name'):
-        #         print(f"  Name: {getattr(tool, 'name', 'N/A')}")
-        #     else:
-        #         print(f"  ❌ MISSING NAME ATTRIBUTE")
-                
-        #     if hasattr(tool, 'description'):
-        #         print(f"  Description: {getattr(tool, 'description', 'N/A')}")
-        #     else:
-        #         print(f"  ❌ MISSING DESCRIPTION ATTRIBUTE")
-        #     print("---")
-            
-        # react_agent = create_react_agent(llm, tools, Prompts.get_primary_prompt())
-        # self.primary_agent = AgentExecutor(agent=react_agent, tools=tools, verbose=True, handle_parsing_errors=True)
-
         # The type "Runnable" suggests that agent is a runnable object that can be invoked with inputs.
         # each of these classes represents a tool that the primary assistant can use to delegate specific tasks
         # By extending the tool list in this way, the assistant gains the ability to route user requests to the specialized workflow.
@@ -145,14 +113,10 @@ class Graph:
                 # By extending the tool list in this way, the assistant gains the ability to route user requests to the specialized workflow.                                          
                 [ToBankAccountAssistant, ToGetListTransaction, ToDisputeTransaction])
 
-
-
-
-        # Tools available to the flight assistant
-        # bank_account_safe_tools = [search_flights]
+        # set sensitive tools for bank account agent
         self.bank_account_sensitive_tools = [update_bank_account_tool]
         self.bank_account_safe_tools = [account_ballance_tool]
-        # bank_account_tools = bank_account_sensitive_tools
+
         # Chain that connects the prompt and tools with the LLM
         self.bank_account_runnable = Prompts.get_bank_account_prompt() | llm.bind_tools(
             bank_tool + [CompleteOrEscalate]
@@ -164,7 +128,6 @@ class Graph:
             transaction_tool + [CompleteOrEscalate]
         )
 
-        # self.safe_tools = [self.bank_account_safe_tools, self.transaction_safe_tools]
         self.safe_tools = [account_ballance_tool, list_transaction_tool]
 
 
@@ -174,13 +137,10 @@ class Graph:
 
         self.chain_prompt_and_tools()
 
-        # route = Routing(self.bank_account_safe_tools)
         route = Routing(self.safe_tools)
         # Build graph
         self.builder.add_node("user_info", self.get_user_info)
-        # builder.add_edge("user_info", "primary_assistant")
         self.builder.add_node("primary_agent", Assistant(self.primary_agent))
-        # self.builder.add_node("primary_agent", lambda state: self.primary_agent_node(state))
         self.builder.add_edge(START, "user_info")
 
         # Later in LangGraph, entry_node(state) runs and returns a ToolMessage + new dialog_state
@@ -224,10 +184,6 @@ class Graph:
         self.builder.add_node(
             "transaction_safe_tools", Utility.create_tool_node_with_fallback(self.transaction_safe_tools)
         )
-        # builder.add_node(
-        #     "bank_account_safe_tools",
-        #     create_tool_node_with_fallback(update_flight_safe_tools),
-        # )
 
         # Adds a tool-handling node named "primary_assistant_tools" to run primary assistant tools and fallback 
         # to the primary assistant if the tool fails.

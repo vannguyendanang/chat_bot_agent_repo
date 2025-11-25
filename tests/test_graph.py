@@ -31,8 +31,6 @@ def main():
     callbacks = [PrintErrors()]
     config = {
         "configurable": {
-            # The passenger_id is used in our flight tools to
-            # fetch the user's flight information
             "account_num": "3423346",
             # Checkpoints are accessed by thread_id
             "thread_id": thread_id,

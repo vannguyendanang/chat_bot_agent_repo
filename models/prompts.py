@@ -48,7 +48,6 @@ class Prompts:
                 "system",
                 "You are a specialized assistant for handling any bank account related issues. "
                 " The primary assistant delegates work to you whenever the user needs help updating their accounts, view account balance. "
-                # "Confirm the updated flight details with the customer and inform them of any additional fees. "
                 # " When searching, be persistent. Expand your query bounds if the first search returns no results. "
                 "If you need more information or the customer changes their mind, escalate the task back to the main assistant."
                 "Before making any changes, verify the account number. "
@@ -96,36 +95,6 @@ class Prompts:
         """
         Returns the primary prompt for the main assistant.
         """
-        # Create the ReAct prompt with required variables
-        # react_prompt = hub.pull("hwchase17/react-chat")
-    
-        # custom_system_message = (
-        #     "You are a helpful customer support assistant for ALLIANCE Bank. "
-        #     "Your primary role is to search for general information and company policies to answer customer queries by using provided tool. "
-        #     "If a customer requests to update bank account information, view account balance,  "
-        #     "delegate the task to the appropriate specialized assistant by invoking the corresponding tool. You are not able to make these types of changes yourself."
-        #     " Only the specialized assistants are given permission to do this for the user."
-        #     "The user is not aware of the different specialized assistants, so do not mention them; just quietly delegate through function calls. "
-        #     "Provide detailed information to the customer, and always double-check the database before concluding that information is unavailable. "
-        #     " When searching, be persistent. Expand your query bounds if the first search returns no results. "
-        #     " If a search comes up empty, expand your search before processing the fallback rule."   
-
-        #     "**Fallback Rule:** "
-        #     "- If you cannot find a definitive answer in the documents after searching, you MUST call the 'get_support_phone' tool with that question to get the correct phone number."
-        #     "After that, tell the user that while you couldn't find the answer, you are connecting them with the team who can."
-        #     # "- Then, you MUST use the 'get_contact_info' tool to get the correct phone number for that department."
-        #     # "- Finally, inform the user that while you couldn't provide the full answer, you are connecting them with the specialized team who can."
-        #     "If the user asks for a human/phone number or want to see a real agent, try to politely ask them their real problem before moving to next step ."
-        #     "Always be helpful and proactive."
-                         
-        # )
-
-        # primary_prompt = ChatPromptTemplate.from_messages([
-        # ("system", custom_system_message),
-        # *react_prompt.messages
-        # # ("human", react_prompt.template)
-        # ])
-        # return primary_prompt
         return Prompts.primary_prompt
     
     @staticmethod

@@ -21,7 +21,9 @@ class PDFTool:
         for path in self.file_paths:
             try:
                 loader = PyPDFLoader(path)
+                # A PDF file is extracted into multiple document objects. Each object is a page in PDF file
                 documents = loader.load()
+                # merge these document objects into the main list instead of adding the list as a single element
                 all_docs.extend(documents)
             except Exception as e:
                 print(f"Error loading PDF content from {path}: {str(e)}")
@@ -36,6 +38,8 @@ class PDFTool:
     #     chunks = splitter.split_documents(docs)
     #     vectorstore = FAISS.from_documents(chunks, HuggingFaceEmbeddings())
     #     self.retriever = vectorstore.as_retriever()
+
+    # chunk size is 256 characters and chunk overlap is 50 characters
     def split_documents(self, documents: List[Document], chunk_size: int = 256, chunk_overlap: int = 50) -> List[Document]:
     # def __init__(self, chunk_size: int = 256, chunk_overlap: int = 50):
         splitter = RecursiveCharacterTextSplitter(
@@ -52,11 +56,14 @@ class PDFTool:
         
         documents = self.load_content()
         chunker = self.split_documents(documents)
+        # Initialize embedding model that will convert text to vector
         embeddings = HuggingFaceEmbeddingsCls()
         # vectorstore = None
         # retriever = None
         # chunks = self.chunker.create_chunks(documents)
+        # setup vector stores
         vectorstores = VectorStore(embeddings.get_embeddings())
+        # index each chunk → create vector embedding for each chunk → save these embeddings into the vector database.
         vectorstore = vectorstores.create_store(chunker)
         retriever_component = Retriever(vectorstore)
         retriever = retriever_component.get_retriever()

@@ -11,59 +11,6 @@ from models.classifier import Classifier
 from tools.support_phone import SupportPhone
 class Utility:
 
-    # CATEGORIES = ["bank_account", "transaction","general_issues", "technical_support"]
-
-    # from tool_calls to ToolMessage
-    # Example input:
-    # state = {
-    #     "error": ValueError("Invalid flight ID"),
-    #     "messages": [
-    #         # ... previous messages ...,
-    #         type("Msg", (), {
-    #             "tool_calls": [
-    #                 {"id": "tool_call_1", "name": "search_flights", "args": {"departure": "JFK", "arrival": "LAX"}},
-    #                 {"id": "tool_call_2", "name": "book_hotel", "args": {"hotel_id": 123}},
-    #             ]
-    #         })()
-    #     ]
-    # }
-    # Example output:
-    # {
-    #     "messages": [
-    #         ToolMessage(
-    #             content="Error: ValueError('Invalid flight ID')\n please fix your mistakes.",
-    #             tool_call_id="tool_call_1"
-    #         ),
-    #         ToolMessage(
-    #             content="Error: ValueError('Invalid flight ID')\n please fix your mistakes.",
-    #             tool_call_id="tool_call_2"
-    #         )
-    #     ]
-    # }
-    # @staticmethod
-    # def handle_tool_error(state) -> dict:
-    #     # get the error obj
-    #     error = state.get("error")
-    #     # get a list of tool call objs of the most recent message in state dict
-    #     # For ex:
-    #     # tool_calls = [
-    #     #     {"id": "tool_call_1", "name": "search_flights", "args": {"departure": "JFK", "arrival": "LAX"}},
-    #     #     {"id": "tool_call_2", "name": "book_hotel", "args": {"hotel_id": 123}},
-    #     # ]
-    #     tool_calls = state["messages"][-1].tool_calls
-    #     # return a dict with a single key "messages" whose value is a list of ToolMessage objs
-    #     # Each ToolMessage is constructed for every tool call in tool_calls
-    #     return {
-    #         "messages": [
-    #             ToolMessage(
-    #                 # repr(error): return the string representation of the error obj
-    #                 content=f"Error: {repr(error)}\n please fix your mistakes.",
-    #                 tool_call_id=tc["id"],
-    #             )
-    #             for tc in tool_calls
-    #         ]
-    #     }
-
     @staticmethod
     def handle_tool_error(payload, config: Optional[RunnableConfig] = None) -> dict:
         """
@@ -106,22 +53,6 @@ class Utility:
         return out
 
 
-    # If any tool in the node raises an error during execution, the sys will automatically call 'handle_tool_error" func
-    # to process the error and generate ToolMessage
-    # input: tools = [add, multiply, minus]
-    # output: 
-    # {
-    #     "messages": [
-    #         ToolMessage(
-    #             content="Error: ValueError('Invalid flight ID')\n please fix your mistakes.",
-    #             tool_call_id="tool_call_1"
-    #         ),
-    #         ToolMessage(
-    #             content="Error: ValueError('Invalid flight ID')\n please fix your mistakes.",
-    #             tool_call_id="tool_call_2"
-    #         )
-    #     ]
-    # }
     @staticmethod
     def create_tool_node_with_fallback(tools: list) -> dict:
         # initialize ToolNode obj with a list of tools
@@ -136,15 +67,6 @@ class Utility:
         )
     
     @staticmethod
-    # You're building a factory (create_entry_node) that can make customized workers (entry_node) 
-    # — each one knows their job title (assistant_name) and what task they’re handling (new_dialog_state).
-    # We can't define a function create_entry_node that takes 3 inputs: assistant_name, new_dialog_state, and state.
-    # Because LangGraph expects a node to be a function of exactly one argument — the state
-    # new_dialog_state is the name of the task you're entering — such as: "book_hotel", "book_car_rental", "book_excursion", "update_flight" 
-    # So when you call: create_entry_node("Hotel Assistant", "book_hotel"):
-    # It returns a node that:
-    # - Sends a system message (ToolMessage) for the hotel assistant
-    # - Pushes "book_hotel" into the dialog_state (likely handled by a stack reducer)
     def create_entry_node(assistant_name: str, new_dialog_state: str) -> Callable:
         def entry_node(state: State) -> dict:
             # retrieve the tool_call_id from the most recent tool call in the conversation history.

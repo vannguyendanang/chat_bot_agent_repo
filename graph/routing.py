@@ -36,7 +36,7 @@ class Routing:
         # state["messages"][-1] will return the last Message object
         tool_calls = state["messages"][-1].tool_calls
         if tool_calls:
-            # If the tool name matches ToFlightBookingAssistant, it routes to a node called "enter_update_flight".
+            # If the tool name matches ToBankAccountAssistant, it routes to a node called "enter_bank_account".
             if tool_calls[0]["name"] == ToBankAccountAssistant.__name__:
                 return "enter_bank_account"
             elif tool_calls[0]["name"] in (ToGetListTransaction.__name__, ToDisputeTransaction.__name__):
@@ -49,23 +49,13 @@ class Routing:
         #     return "phone_support_route"
     
     # Each delegated workflow can directly respond to the user
-    # When the user responds, we want to return to the currently active workflow (e.g., hotel booking, car rental)
-    # Input: 
-    # state = {
-    #     "dialog_state": ["update_flight"],  # user is currently in flight update subgraph
-    #     "messages": [...],
-    # }
-    # Output: "update_flight"
-    # @staticmethod
+    # When the user responds, we want to return to the current active workflow 
     def route_from_start_to_sub_assistant(self,
         state: State, *args, **kwargs
     ) -> Literal[
         "primary_agent",
         "bank_account_agent",
         "account_transaction_agent"
-        # "book_car_rental",
-        # "book_hotel",
-        # "book_excursion",
     ]:
         
         """If we are in a delegated state, route directly to the appropriate assistant."""
@@ -77,18 +67,6 @@ class Routing:
         # Otherwise, return to the last (active) dialog node from the state stack.
         return dialog_state[-1]    
     
-    # example input:
-    # state = {
-    #     "messages": [
-    #         # ... previous messages ...,
-    #         type("Msg", (), {
-    #             "tool_calls": [
-    #                 {"name": "search_flights", "id": "tool_call_1", "args": {}},
-    #                 {"name": "CompleteOrEscalate", "id": "tool_call_3", "args": {"cancel": True, "reason": "User changed their mind."}}
-    #             ]
-    #         })()
-    #     ]
-    # }
     # example output: 
     # "leave_skill"
     # None = None: value may be None, and arg is OPTIONAL
@@ -97,7 +75,6 @@ class Routing:
     # route_from_bank_account_node(state) --> OK
     # @staticmethod
     def route_from_bank_account_node(self,
-        # state: State, safe_tools: List
         state: State, config: RunnableConfig | None = None
     ):
         route = tools_condition(state)

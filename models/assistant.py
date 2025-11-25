@@ -6,24 +6,6 @@ class Assistant:
     def __init__(self, runnable: Runnable):
         self.runnable = runnable
 
-    # Example result returned by the Assistant:
-    # result = AIMessage(
-    # content=[{
-    #     "text": "I'll help you search for available flights from New York to London.",
-    #     "type": "text"
-    # }],
-    # tool_calls=[
-    #     {
-    #         "id": "call_abc123",
-    #         "name": "search_flights", 
-    #         "args": {
-    #             "departure_airport": "JFK",
-    #             "arrival_airport": "LHR",
-    #             "start_time": "2024-08-15"
-    #         }
-    #     }
-    # ]
-    # )
     def __call__(self, state: State):
         while True:
             result = self.runnable.invoke(state)
