@@ -5,8 +5,10 @@ from langchain_community.document_loaders import PyPDFLoader
 # from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.tools import tool
 from typing import List
-from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+# from langchain.schema import Document
+from langchain_core.documents import Document
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tools.vector_store import VectorStore
 from tools.huggingfaceembeddings import HuggingFaceEmbeddingsCls
 from tools.retriever import Retriever

@@ -5,7 +5,9 @@ python-dotenv
 pydantic
 langchain-core
 langgraph
+langchain
 langchain_community
+langchain-text-splitters
 langchain_chroma
 langchain_mistralai
 mistralai
