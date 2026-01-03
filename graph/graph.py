@@ -26,12 +26,17 @@ from langgraph.checkpoint.mysql.pymysql import PyMySQLSaver
 import pymysql
 from app.constants import Constants
 from pathlib import Path
+
+import logging, traceback
+from app.server import APP_LOGGER  # or define a constant in one place
+log = logging.getLogger(f"{APP_LOGGER}.{__name__}")
+
 # from langchain.agents import create_react_agent, AgentExecutor
 
 # from IPython.display import Image, display
 
 class Graph:
-
+    
     def make_conn(self):
         db_user = os.environ["DB_USER"]
         db_pass = os.environ["DB_PASS"]
@@ -50,10 +55,6 @@ class Graph:
 
     def __init__(self):
         self.builder = StateGraph(State)
-        # self.checkpointer = PyMySQLSaver.from_conn_string("mysql://root:Admin25&@@localhost:3306/bank_chatbot")
-        # self.conn = pymysql.connect(
-        #     host=Constants.DB_HOST, user=Constants.DB_USER, password=Constants.DB_PASS, database=Constants.DB_NAME, port=Constants.DB_PORT, autocommit=True
-        # )
         self.conn = self.make_conn()
         self.checkpointer = PyMySQLSaver(self.conn)  # real saver, not a context manager
         self.checkpointer.setup()  # safe to call each start
@@ -62,17 +63,18 @@ class Graph:
         if self.conn:
             self.conn.close()
 
-
-
     # Keep the state parameter. LangGraph calls each node with (state, config)
     def get_user_info(self, _state: State, config: RunnableConfig) -> dict:
+        log.info("Setup user info")
         return {"user_info": Utility.get_user_account_number(config)}
 
     def chain_prompt_and_tools(self) -> None:
+        log.info("Chain the prompt and tools together.")
         """Chain the prompt and tools together."""
 
         docs_dir = Path(os.getenv("DOCS_DIR", Path(__file__).resolve().parent.parent / "documents"))
 
+        
         filenames = [
         "ALLIANCE Banking Business Process.pdf",
         "ALLIANCE Banking General Info&Policy.pdf",
@@ -106,8 +108,6 @@ class Graph:
         self.primary_assistant_tool = [policy_tool, phone_support_tool]
             
         # The type "Runnable" suggests that agent is a runnable object that can be invoked with inputs.
-        # each of these classes represents a tool that the primary assistant can use to delegate specific tasks
-        # By extending the tool list in this way, the assistant gains the ability to route user requests to the specialized workflow.
         self.primary_agent: Runnable = Prompts.get_primary_prompt() | llm.bind_tools(self.primary_assistant_tool + 
                 # each of these classes represents a tool that the primary assistant can use to delegate specific tasks
                 # By extending the tool list in this way, the assistant gains the ability to route user requests to the specialized workflow.                                          
@@ -133,8 +133,10 @@ class Graph:
 
     
     def build_graph(self):
+        log.info("Build the graph with nodes and edges.")
         """Build the graph with nodes and edges."""
 
+        # define a list of tools, which ones are safe tools and which ones are sentitive tools and then connect prompt and tools for each agents (primary, account, transaction agent)
         self.chain_prompt_and_tools()
 
         route = Routing(self.safe_tools)
@@ -143,10 +145,12 @@ class Graph:
         self.builder.add_node("primary_agent", Assistant(self.primary_agent))
         self.builder.add_edge(START, "user_info")
 
-        # Later in LangGraph, entry_node(state) runs and returns a ToolMessage + new dialog_state
-        # LangGraph merges update into conversation state
+        # First, primary agent will generate a tool call including tool name and tool id based on its configured tools
+        # Later in during runtime, entry_node(state) runs and returns a ToolMessage(content + tool_call_id) + new dialog_state
+        # We will use this node to transfer a ToolMessage and tool_id to the specialized agent
         self.builder.add_node(
             "enter_bank_account",
+            # return a func "entry_node" and stored internally to be used later during runtime
             Utility.create_entry_node("Bank Account Assistant", "bank_account_agent"),
         )
 
@@ -190,10 +194,6 @@ class Graph:
         self.builder.add_node(
             "primary_assistant_tools", Utility.create_tool_node_with_fallback(self.primary_assistant_tool)
         )
-
-        # self.builder.add_node(
-        #     "phone_support_route", Utility.phone_support_route
-        # )
 
         # The assistant can route to one of the delegated assistants,
         # directly use a tool, or directly respond to the user
@@ -256,6 +256,7 @@ class Graph:
         return self.builder
 
     def compile_graph(self) -> CompiledStateGraph:
+        log.info("Compile graph.")
         # Compile graph
         # memory = MemorySaver()
         # self.checkpointer.setup()
@@ -266,28 +267,18 @@ class Graph:
             interrupt_before=[
                 "bank_account_sensitive_tools",
                 "transaction_sensitive_tools",
-                # "book_hotel_sensitive_tools",
-                # "book_excursion_sensitive_tools",
             ],
         )
         
-
-
-
-        # try:
-            # display(Image(mygraph.get_graph(xray=True).draw_mermaid_png()))
             
         # Get the PNG bytes from the graph
-        png_bytes = mygraph.get_graph(xray=True).draw_mermaid_png()
+        # png_bytes = mygraph.get_graph(xray=True).draw_mermaid_png()
 
-        # Save to file
-        output_path = "graph_visualization.png"
-        with open(output_path, "wb") as f:
-            f.write(png_bytes)
+        # # Save to file
+        # output_path = "graph_visualization.png"
+        # with open(output_path, "wb") as f:
+        #     f.write(png_bytes)
 
-        print(f"Graph saved to: {output_path}")
-        # except Exception:
-            # This requires some extra dependencies and is optional
-            # pass
+        # print(f"Graph saved to: {output_path}")
 
         return mygraph

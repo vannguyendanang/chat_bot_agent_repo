@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Login</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Load React, ReactDOM and Babel libs into the browser -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- <script type="text/babel">: allow to insert HTML syntax in javascript -->
+  <script type="text/babel"> 
+    // Extracts useState hook from React, useState lets your component remember values
+    const { useState } = React;
+
+    function Login() {
+      const [account, setAccount] = useState("");
+      const [password, setPassword] = useState("");
+      const [error, setError] = useState("");
+
+      // Runs when user clicks Login
+      // async because it calls backend
+      async function handleLogin() {
+        // Clears previous error message
+        setError("");
+
+        // Sends request with account_number and password to backend endpoint /login
+        const res = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account_number: account,
+            password: password
+          })
+        });
+
+        // get back the response
+        const data = await res.json();
+
+        if (data.success) {
+          window.location.href = `/index.html?account=${account}`;
+        } else {
+          setError("Invalid account number or password");
+        }
+      } //end of handleLogin
+      // JSX = HTML-like syntax inside JavaScript
+      return (
+        <div style={{ maxWidth: 400, margin: "100px auto" }}>
+          <h2>Bank Login</h2>
+
+          <input
+            placeholder="Account Number"
+            value={account}
+            // updates state when user types
+            onChange={e => setAccount(e.target.value)}
+          />
+
+          <br /><br />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+
+          <br /><br />
+
+          <button onClick={handleLogin}>
+            Login
+          </button>
+          {/*Only shows error message if error is not empty*/}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+        </div>
+      );
+    } //end of func Login
+
+    // Find the HTML element with id root and then render the Login react component (call the Login func)
+    ReactDOM.createRoot(document.getElementById("root")).render(<Login />);
+  </script>
+</body>
+</html>

@@ -67,16 +67,30 @@ class Utility:
         )
     
     @staticmethod
+    # this method runs once, when we build the graph. It's defined to configure a node
     def create_entry_node(assistant_name: str, new_dialog_state: str) -> Callable:
+        # This method runs later when the graph is executed to return updates to the state
+        # The graph will input state param during runtime
         def entry_node(state: State) -> dict:
             # retrieve the tool_call_id from the most recent tool call in the conversation history.
-            tool_call_id = state["messages"][-1].tool_calls[0]["id"]
+            # state["messages"] → [HumanMessage, AIMessage, AIMessage, ...]
+            # Conversation
+            #   └── messages[]
+            #         └── last AI message
+            #               └── tool_calls[]
+            #                     └── tool_call
+            #                           ├── id
+            #                           ├── name
+            #                           ├── args
+            #                           └── type
+            last_msg = state["messages"][-1]
+            tool_call_id = last_msg.tool_calls[0]["id"]
             return {
                 "messages": [
                     ToolMessage(
                         content=f"The assistant is now the {assistant_name}. Reflect on the above conversation between the host assistant and the user."
                         f" The user's intent is unsatisfied. Use the provided tools to assist the user. Remember, you are {assistant_name},"
-                        " and the update, other other action is not complete until after you have successfully invoked the appropriate tool."
+                        " and the update, other action is not complete until after you have successfully invoked the appropriate tool."
                         " If the user changes their mind or needs help for other tasks, call the CompleteOrEscalate function to let the primary host assistant take control."
                         " Do not mention who you are - just act as the proxy for the assistant.",
                         tool_call_id=tool_call_id,
@@ -93,17 +107,6 @@ class Utility:
     # This node will be shared for exiting all specialized assistants
     # This function ends or exits a sub-dialogue (or subgraph) in a larger conversational system and return control 
     # to the main assistant.
-    # Example input:
-    # state = {
-    #     "messages": [
-    #         # ... previous messages ...,
-    #         type("Msg", (), {
-    #             "tool_calls": [
-    #                 {"id": "tool_call_123", "name": "CompleteOrEscalate", "args": {"cancel": True, "reason": "User changed their mind."}}
-    #             ]
-    #         })()
-    #     ]
-    # }
     # Example output:
     # {
     #     "dialog_state": "pop",
@@ -120,8 +123,11 @@ class Utility:
         This lets the full graph explicitly track the dialog flow and delegate control
         to specific sub-graphs.
         """
+        # print("Value in the state \n", state)
         messages = []
         # whether the most recent message in the conversation history includes any tool calls
+        # Example the latest tool call:
+        # tool_calls=[{'name': 'CompleteOrEscalate', 'args': {'reason': 'The user wants to dispute a transaction, which requires assistance beyond bank account updates or balance inquiries.'}, 'id': 'call_sRN6zfG7MwsnhCCBeOLL4Z41', 'type': 'tool_call'}]
         if state["messages"][-1].tool_calls:
             # Note: Doesn't currently handle the edge case where the llm performs parallel tool calls
             messages.append(
@@ -150,46 +156,64 @@ class Utility:
     @staticmethod
     # Input:
     # event = {
-    #     "dialog_state": ["start", "tool_node", "end"],
     #     "messages": [
-    #         type("Msg", (), {
-    #             "id": "msg_123",
-    #             "pretty_repr": lambda self, html=False: "<b>Hello, user!</b>" if html else "Hello, user!"
-    #         })()
-    #     ]
+    #         HumanMessage(
+    #             content="hi",
+    #             ...,
+    #             id="d02a1447-b389-4624-a08c-14fe56ec08ca"
+    #         ),
+    #         AIMessage(
+    #             content="Hello! Welcome to ALLIANCE Bank support. How can I assist you today?",
+    #             ...,
+    #             id="chatcmpl-CntwgVmlOTxZ3WOUJzCZpYPFnBbk4",
+    #             response_metadata={...},
+    #             usage_metadata={...}
+    #         )
+    #     ],
+    #     "user_info": "3423346",
+    #     "dialog_state": []
     # }
-    # _printed = set()
+    # event["messages"] is a list
+    # Each element is a LangChain message object (HumanMessage, AIMessage)
+
     # Output:
-    # Currently in:  end
-    # <b>Hello, user!</b>
+    # ================================== Ai Message ==================================
+    # Hello! Welcome to ALLIANCE Bank support. How can I assist you today?
+
     def _print_event(event: dict, _printed: set, max_length=1500):
+        
+        # print("Check Pure event before any processing \n", event)
         # get the current state
         current_state = event.get("dialog_state")
         # If the state exists then prints the last entry which is the most recent step or node in the flow.
-        if current_state:
-            # print("All of the dialog states: ", current_state)
-            print("Currently in dialog state: ", current_state[-1])
+        # if current_state:
+        print("******************")
+        print("Current dialog state: ", current_state)
+            # print("Currently in dialog state: ", current_state[-1])
 
-        # print("Node name: ", event.get("name"))
         # get the message field from the event.
-        message = event.get("messages")
+        messages = event.get("messages")
 
         # if message is present
-        if message:
+        if messages:
             # check if the message is a list, if so, selects the last message in the list
-            if isinstance(message, list):
-                message = message[-1]
-                # message = [message]
+            # if isinstance(message, list):
+            #     message = message[-1]
+                # print("Message extracted ", message)
+            for message in messages:
             # check if the message id already printed by looking it up in the _printed set
-            if message.id not in _printed:
-                # If it hasn't, print a pretty HTML representation of the message
-                msg_repr = message.pretty_repr(html=True)
-                # If the presentation exceeds the specified max length then truncate the output and append an indicator
-                if len(msg_repr) > max_length:
-                    msg_repr = msg_repr[:max_length] + " ... (truncated)"
-                # print the formatted message and adds the message ID to the _printed set to avoid printing duplicates in the future.
-                print(msg_repr)
-                _printed.add(message.id)
+                if message.id not in _printed:
+                    # If it hasn't, print a pretty HTML representation of the message
+                    msg_repr = message.pretty_repr(html=True)
+                    # print("Message.id ", message.id)
+                    # If the presentation exceeds the specified max length then truncate the output and append an indicator
+                    if len(msg_repr) > max_length:
+                        msg_repr = msg_repr[:max_length] + " ... (truncated)"
+                    # print message id
+                    print("ID for below message: ", message.id)
+                    # print the formatted message and adds the message ID to the _printed set to avoid printing duplicates in the future.
+                    print(msg_repr)
+                    _printed.add(message.id)
 
     @staticmethod
     def print_updates(step):
