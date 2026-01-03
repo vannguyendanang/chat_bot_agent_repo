@@ -1,3 +1,13 @@
 # secrets / local config
 .env
 .env.*
+chroma_db/
+__pycache__/
+*.pyc
+~$*.docx
+checkpoint-*/
+**/checkpoint-*/
+trainer_state.json
+optimizer.pt
+scheduler.pt
+rng_state.pth

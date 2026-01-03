@@ -5,6 +5,7 @@ from langchain_core.tools import ToolException
 from models.classifier import Classifier
 from app.constants import Constants
 import os 
+from tools.intent_tool import intent_tool
 
 class SupportPhone:
     """
@@ -65,8 +66,13 @@ class SupportPhone:
                 question (str): The original question from the user that could not be answered.
             """
 
-            classifier_llm = Classifier()
-            cat = classifier_llm.classify_query(question) 
+            # classifier_llm = Classifier()
+            # cat = classifier_llm.classify_query(question) 
+            pred = intent_tool.invoke({"query": question})
+            cat = pred["intent"].lower()
+            confidence = pred["confidence"]
+            if confidence < 0.6:
+                cat = "general_issues"
 
             conn = self.pool.get_connection()
             cursor = None

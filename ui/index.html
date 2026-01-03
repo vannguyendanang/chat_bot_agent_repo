@@ -18,7 +18,7 @@
         width: var(--w);
         margin: 10px auto 16px;
         display: flex;
-        gap: 10px;
+        gap: 5px;
       }
 
     .title{
@@ -33,7 +33,7 @@
     /* Make the textarea fill the row and be taller */
     #input {
         flex: 1;
-        height: 140px;           /* taller than rows=3 */
+        height: 80px;           /* taller than rows=3 */
         font-size: 16px;
         resize: vertical;        /* let users drag taller if they want */
     }
@@ -85,7 +85,7 @@
     .subtitle{
       margin-top: 7px;
       text-align: center;
-      font-size: 0.95rem;
+      font-size: 1.0rem;
     }
 
     /* Column that holds the messages */
@@ -103,7 +103,9 @@
     
     <div class="page">
         <h1 class="title">ALLIANCE Bank Chat Bot Assistant</h1>
-        <p class="subtitle">You are logged in under account number <strong>3423346</strong>.</p>
+        <p class="subtitle">You are logged in under account number <strong id="acc"></strong>.
+        <button id="logoutBtn">Logout</button>
+        </p>
         <div id="response">
           <div id="messages"></div>
         </div>
@@ -120,9 +122,32 @@
         const chat = document.getElementById("response");
         const messages = document.getElementById("messages");
         const input = document.getElementById("input");
-        //const account = document.getElementById("account");
+        const logoutBtn = document.getElementById("logoutBtn");
         const sendBtn = document.getElementById("send");
+        const KEY = "bank_chat_session";
 
+        // Read params from current page's URL
+        const params = new URLSearchParams(window.location.search);
+        const account = params.get("account");
+
+        if (!account) {
+            window.location.href = "/login.html";
+        }
+
+        // set value for element "acc"
+        document.getElementById("acc").textContent = account
+        
+        // logout Button logic
+        logoutBtn.onclick = () =>{
+          // remove chat session id
+           sessionStorage.removeItem(KEY);
+          // remove greeting flag
+          sessionStorage.removeItem("greeted");
+          // redirect to React login page
+          window.location.href = "/login.html";
+        }
+
+        //Scrolls the chat container to the bottom.
         function scrollToBottom(smooth = false) {
             if (smooth && "scrollTo" in chat) {
             chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
@@ -131,6 +156,7 @@
             }
         }
 
+        // append a new line into respond message
         function appendMsg(role, text){
             const line = document.createElement("div");
             // role is "user" or "bot"; we’ll map bot -> assistant for readability
@@ -139,22 +165,26 @@
             line.textContent = text;
             messages.appendChild(line);
 
-            // scroll the pane, not the messages div
+            // Forces the #response scroll to bottom.
             chat.scrollTop = chat.scrollHeight;
         }
                 
         // 1) Default to bottom when the page loads (e.g., if you render history)
         document.addEventListener("DOMContentLoaded", () => scrollToBottom());
 
-        const KEY = "test_8";
+        
+        // sessionStorage persists for the current browser tab session (clears when tab closes).
         let sessionId = sessionStorage.getItem(KEY);
+        // if sessionid = null
         if (!sessionId) {
+            // generate a random sessionid and then store it in sessionStorage
             sessionId = (crypto?.randomUUID?.() ?? String(Date.now()));
             sessionStorage.setItem(KEY, sessionId);
         }
 
       async function send() {
         const text = input.value.trim();
+        // exits if text is empty
         if (!text) return;
 
         appendMsg("user", text);  // right-aligned, no background
@@ -167,18 +197,23 @@
         sendBtn.disabled = true;
 
         try {
+          // Calls backend endpoint POST /send
           const res = await fetch("/send", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ session_id: sessionId, text })
+            // Sends JSON body { session_id, account_number, text }.
+            body: JSON.stringify({ session_id: sessionId, 
+                                   account_number: account,
+                                   text })
           });
+          // Waits for response and parses it as JSON into data.
           const data = await res.json();
           
           if (data.awaiting_approval) {
             // chat.textContent += "\nBOT: I need your confirmation to process your request. Please reply 'yes' to agree or 'no' to disagree.\n";
             appendMsg("bot", "I need your confirmation to process your request. Please reply 'yes' to agree or 'no' to disagree.")
           } else {
-            // chat.textContent += "\nBOT: " + (data.reply || "(no reply)");
+            // if backend does not need a confirmation, just show the response message out or the text "(no reply)"
             appendMsg("bot", data.reply || "(no reply)");
           }
           scrollToBottom(true);     // 3) after bot line (smooth)
@@ -191,14 +226,17 @@
         }
       }
 
+      // Clicking the button triggers send()
       sendBtn.onclick = send;
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          send();
+          e.preventDefault(); //stops the textarea from adding a newline when Enter is used to send.
+          send(); // Press Enter sends the message.
         }
       });
 
+      // When the page loads, it checks if it has already greeted this tab session.
+      // If not, it appends a greeting and sets greeted=1.
       window.addEventListener('DOMContentLoaded', () => {
         if (!sessionStorage.getItem('greeted')) {
           appendMsg('assistant', 'Hello! Welcome to ALLIANCE Bank support. How can I assist you today?');
