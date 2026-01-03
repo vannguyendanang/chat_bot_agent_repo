@@ -11,3 +11,4 @@ trainer_state.json
 optimizer.pt
 scheduler.pt
 rng_state.pth
+training/
