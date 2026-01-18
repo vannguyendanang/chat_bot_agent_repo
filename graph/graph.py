@@ -28,8 +28,8 @@ from app.constants import Constants
 from pathlib import Path
 
 import logging, traceback
-from app.server import APP_LOGGER  # or define a constant in one place
-log = logging.getLogger(f"{APP_LOGGER}.{__name__}")
+# from app.server import APP_LOGGER  # or define a constant in one place
+log = logging.getLogger(f"{Constants.APP_LOGGER}.{__name__}")
 
 # from langchain.agents import create_react_agent, AgentExecutor
 
@@ -95,8 +95,8 @@ class Graph:
         phone_support_tool = phone_support_obj.get_tool()  
 
         bank_tool_obj = AccountTool()
-        update_bank_account_tool, account_ballance_tool = bank_tool_obj.get_tool()
-        bank_tool = [update_bank_account_tool, account_ballance_tool]
+        update_bank_account_tool, account_balance_tool = bank_tool_obj.get_tool()
+        bank_tool = [update_bank_account_tool, account_balance_tool]
 
         transaction_obj = TransactionTool()
         list_transaction_tool, dispute_transaction_tool = transaction_obj.get_tool()
@@ -115,7 +115,7 @@ class Graph:
 
         # set sensitive tools for bank account agent
         self.bank_account_sensitive_tools = [update_bank_account_tool]
-        self.bank_account_safe_tools = [account_ballance_tool]
+        self.bank_account_safe_tools = [account_balance_tool]
 
         # Chain that connects the prompt and tools with the LLM
         self.bank_account_runnable = Prompts.get_bank_account_prompt() | llm.bind_tools(
@@ -128,7 +128,7 @@ class Graph:
             transaction_tool + [CompleteOrEscalate]
         )
 
-        self.safe_tools = [account_ballance_tool, list_transaction_tool]
+        self.safe_tools = [account_balance_tool, list_transaction_tool]
 
 
     

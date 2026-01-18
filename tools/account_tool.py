@@ -7,7 +7,7 @@ from langchain_core.tools import ToolException
 import logging, traceback
 from mysql.connector.pooling import MySQLConnectionPool
 from app.constants import Constants
-
+from langchain_core.messages import ToolMessage
 
 class AccountTool:
     def __init__(self):
@@ -66,9 +66,11 @@ class AccountTool:
         
         @tool
         def update_bank_account(account_number: str,
+                                # tool_call_id: str, # all non default param must be in front of default params
                                 address: Optional[str] = None, 
                                 email: Optional[str] = None,
-                                phone_number: Optional[str] = None) -> str:
+                                phone_number: Optional[str] = None 
+                                ) -> str:
             """Update the user's bank account."""
             conn = self.pool.get_connection()
             cursor = None
@@ -80,6 +82,9 @@ class AccountTool:
                     # return "No field is provided to update."
                     raise ToolException("No field is provided to update.")
                 
+                if not account_number:
+                    raise ToolException("No account number is provided!")
+
                 # Build query dynamically based on provided parameters
                 update_fields = []
                 params = []
@@ -99,6 +104,13 @@ class AccountTool:
                 # Add the account number to the parameters
                 params.append(account_number)
                 
+                # Check existance
+                cursor.execute("Select 1 from bankaccount where AccountNumber = %s", (account_number,))
+                exists = cursor.fetchone()
+
+                if not exists:
+                    raise ToolException("No account found with the input account number.")
+                
                 # Construct the SQL query
                 query = f"UPDATE bankaccount SET {', '.join(update_fields)} where AccountNumber = %s"
                 
@@ -109,7 +121,13 @@ class AccountTool:
 
                 if cursor.rowcount == 0:
                     # return "No account found with the provided account number."
-                    raise ToolException("No account found with the provided account number.")
+                    # raise ToolException("No account found with the provided account number.")
+                    # return a ToolMessage when no update is performed, the updated data is already in DB
+                    # return ToolMessage(
+                    #     tool_call_id = tool_call_id,
+                    #     content=("No update is performed because the new information is already stored in the storage")
+                    # )
+                    return "No update is performed because the new information is already stored in the system"
                 
                 return f"Bank account updated to {account_number}"
             except Exception as e:

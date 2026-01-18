@@ -23,45 +23,25 @@
     ], 'user_info': '3423346', 'dialog_state': []
 }
 
- {'messages': [HumanMessage(content="I want to ...", 
-                            additional_kwargs={}, 
-                            response_metadata={}, 
-                            id='3ac254fb-2a66-4591-b88c-c9c46dc417b3'), 
+ {'messages': [HumanMessage(content="I want to ...", additional_kwargs={}, response_metadata={}, id='3ac254fb-2a66-4591-b88c-c9c46dc417b3'), 
                AIMessage(content='', 
                         additional_kwargs={'tool_calls': [
-                            {'id': 'call_X476D0I6surhpelfjgEbrS45', 'function': {'arguments': '{
-                                        "transfer_date_time": "2025-10-25 11:00:30",
-                                        "receiver_firstname": "Mendoza",
-                                        ...
-                                    }', 'name': 'ToDisputeTransaction'
-                                }, 'type': 'function'
-                            }
-                         ], 'refusal': None }, 
-                        response_metadata={'token_usage': {'completion_tokens': 49, 'prompt_tokens': 700, 'total_tokens': 749, 
-                                                            'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0 }, 
-                                                            'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}
-                                                          }, 
+                            {'id': 'call_X476D0I6surhpelfjgEbrS45', 
+                            'function': {'arguments': '{
+                                            "transfer_date_time": "2025-10-25 11:00:30",
+                                            "receiver_firstname": "Mendoza",
+                                        ...}', 
+                                        'name': 'ToDisputeTransaction'}, 
+                            'type': 'function'}], 
+                            'refusal': None }, 
+                        response_metadata={'token_usage': {'completion_tokens': 49, ...}, 
                                             'model_name': 'gpt-4.1-2025-04-14', 'system_fingerprint': 'fp_b9041e10b4', 'id': 'chatcmpl-CsxDDNTeZuhDtsrmQgB6rOcrqE5ab', 'service_tier': None, 
-                                            'prompt_filter_results': [
-                                                {'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
-                                                        }, 'self_harm': {'filtered': False, 'severity': 'safe'
-                                                        }, 'sexual': {'filtered': False, 'severity': 'safe'
-                                                        }, 'violence': {'filtered': False, 'severity': 'safe'
-                                                        }
-                                                    }
-                                                }
-                                            ], 
-                                            'finish_reason': 'tool_calls', 'logprobs': None, 'content_filter_results': {}
-                                          }, 
+                                            'prompt_filter_results': [...],...}, 
                         id='run--1b065bec-39c8-4ad5-b1f0-4c394c2c789c-0', 
-                        tool_calls=[{'name': 'ToDisputeTransaction', 'args': {'transfer_date_time': '2025-10-25 11: 00: 30', 'receiver_firstname': 'Mendoza', 'receiver_lastname': 'Myers', 'transfer_amount': '798'}, 
+                        tool_calls=[{'name': 'ToDisputeTransaction', 'args': {'transfer_date_time': '2025-10-25 11: 00: 30', 'receiver_firstname': 'Mendoza', ...}, 
                                     'id': 'call_X476D0I6surhpelfjgEbrS45', 'type': 'tool_call'}], 
-                                    usage_metadata={'input_tokens': 700, 'output_tokens': 49, 'total_tokens': 749, 'input_token_details': {'audio': 0, 'cache_read': 0}, 
-                                                    'output_token_details': {'audio': 0, 'reasoning': 0}
-                                                    }), 
-                                    ToolMessage(content="The assistant is now the Transaction Assistant. Reflect on the above ...", 
-                                                id='505fb1aa-2d3e-4dc5-bbf3-cf5c781ffbf7', 
-                                                tool_call_id='call_X476D0I6surhpelfjgEbrS45')
+                                    usage_metadata={'input_tokens': 700, ...}), 
+                ToolMessage(content="The assistant is now the Transaction Assistant. Reflect on the above ...", id='505fb1aa-2d3e-4dc5-bbf3-cf5c781ffbf7', tool_call_id='call_X476D0I6surhpelfjgEbrS45')
             ], 'user_info': '3423350', 
             'dialog_state': ['account_transaction_agent']
  }

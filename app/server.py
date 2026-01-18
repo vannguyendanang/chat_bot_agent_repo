@@ -3,15 +3,15 @@ load_dotenv()  # loads .env from the current working directory or parents
 # import os
 # print("Tracing:", os.getenv("LANGCHAIN_TRACING_V2"))
 # print("Project:", os.getenv("LANGCHAIN_PROJECT"))
-
+from app.constants import Constants
 import logging, sys
 from tools.user_login import UserLogin
 
-APP_LOGGER = "bankbot"  # your app-wide logger namespace
+
 
 def setup_logging():
     # Create a logger object named "bankbot"
-    log = logging.getLogger(APP_LOGGER)
+    log = logging.getLogger(Constants.APP_LOGGER)
     # accept DEBUG on this logger
     # set the log level to DEBUG
     log.setLevel(logging.DEBUG)

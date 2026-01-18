@@ -66,7 +66,8 @@ class IntentClassifier:
         # get the predict label text from label id, if no value returned, assign that pred_id to label
         label = self.id2label.get(str(pred_id), str(pred_id))
         print("label text in intent classifier ", label)
-        # Take the model’s raw scores → convert them into probabilities → pick the probability of the predicted intent → safely convert it into a Python float.
+        # Take the model’s raw scores → convert them into probabilities 
+        # → pick the probability of the predicted intent → [0, pred_id]: pick prob at row 0 and col pred_id (at this time we have only 1 row or 1 sample).
         # detach(): Removes this tensor from PyTorch’s computation graph, Prevents gradient tracking
         # logits has shape batch_size x num_labels; dim=-1 means compute softmax across the last axis (the num_label axis)
         confidence = float(torch.softmax(out.logits, dim=-1)[0, pred_id].detach().cpu().item())

@@ -12,7 +12,12 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tools.vector_store import VectorStore
 from tools.huggingfaceembeddings import HuggingFaceEmbeddingsCls
 from tools.retriever import Retriever
+import logging, traceback
+import ftfy
+# from app.server import APP_LOGGER
 
+# log = logging.getLogger(f"{APP_LOGGER}.{__name__}")
+log = logging.getLogger(__name__)
 
 class PDFTool:
     def __init__(self, file_paths: List[str]):
@@ -42,7 +47,7 @@ class PDFTool:
     #     self.retriever = vectorstore.as_retriever()
 
     # chunk size is 256 characters and chunk overlap is 50 characters
-    def split_documents(self, documents: List[Document], chunk_size: int = 256, chunk_overlap: int = 50) -> List[Document]:
+    def split_documents(self, documents: List[Document], chunk_size: int = 400, chunk_overlap: int = 50) -> List[Document]:
     # def __init__(self, chunk_size: int = 256, chunk_overlap: int = 50):
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
@@ -53,11 +58,18 @@ class PDFTool:
         print(f"Created {len(chunks)} chunks from the {len(documents)} documents.")
         return chunks
     
-    def get_tool(self):
-        # chunker = DocumentChunker()
-        
+    def normalize_text(self, text:str) -> str:
+        # Fix mojibake (â¢ → •, â → ’, etc.)
+        text = ftfy.fix_text(text)
+        return text
+    
+    def tool_build(self):
         documents = self.load_content()
         chunker = self.split_documents(documents)
+
+        for c in chunker:
+            c.page_content = self.normalize_text(c.page_content)
+
         # Initialize embedding model that will convert text to vector
         embeddings = HuggingFaceEmbeddingsCls()
         # vectorstore = None
@@ -69,6 +81,11 @@ class PDFTool:
         vectorstore = vectorstores.create_store(chunker)
         retriever_component = Retriever(vectorstore)
         retriever = retriever_component.get_retriever()
+        return retriever
+    
+    def get_tool(self):
+
+        retriever = self.tool_build()
 
         @tool
         def lookup_pdf(query: str) -> str:
@@ -81,8 +98,18 @@ class PDFTool:
             results = retriever.invoke(query)
 
             # print the source and page number of each result for debugging
-            # for i, d in enumerate(results):
+            # print("Print out the retrieved context\n")
+            log.info("The retrieved context")
+            for i, d in enumerate(results):
                 # print(i, d.metadata.get("source"), d.metadata.get("page"), len(d.page_content), hash(d.page_content))
+                log.info(
+                    "chunk=%d source=%s page=%s chars=%d content=%s",
+                    i,
+                    d.metadata.get("source"),
+                    d.metadata.get("page"),
+                    len(d.page_content),
+                    d.page_content
+                )
             
             return "\n\n".join([doc.page_content for doc in results])
 

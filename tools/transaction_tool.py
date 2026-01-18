@@ -5,11 +5,12 @@ from langchain.tools import tool
 from datetime import datetime
 from langchain_core.tools import ToolException
 from langsmith.run_helpers import traceable
-from app.server import APP_LOGGER  # or define a constant in one place
+# from app.server import APP_LOGGER  # or define a constant in one place
 from app.constants import Constants
 import pymysql
 import os
-log = logging.getLogger(f"{APP_LOGGER}.{__name__}")
+
+log = logging.getLogger(f"{Constants.APP_LOGGER}.{__name__}")
 
 class TransactionTool:
 

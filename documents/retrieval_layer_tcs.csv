@@ -1,0 +1,179 @@
+﻿id,question,contexts,answer,ground_truth
+Q_1,How do I stop or cancel a charge?,"[""switching to a non-UK phone number.
+III. Dispute a transaction:
+1. How do I stop or cancel a charge?
+The quickest way to stop or cancel a charge is to contact the merchant directly. If the"",
+""charge posts and you wish to dispute, you may sign in to alliance.com or call the\nnumber on the back of your credit card.
+2. Can I dispute a pending charge?
+Credit card: Charge must be posted in order for a dispute to be opened. Pending"",
+""To cancel a dispute, call the number on the back of your card. We also accept operator
+relay calls.
+6. Do I have to pay the disputed amount while the credit card dispute is being investigated?""]","To stop or cancel a charge, the quickest way is to contact the merchant directly. If the charge has already posted and you wish to dispute it, you can sign in to alliance.com or call the number on the back of your credit card for further assistance.","Contact the merchant directly.
+If the charge posts and you wish to dispute, you may sign in to alliance.com or call the number on the back of your credit card."
+Q_2,Can I dispute a pending charge,"[""charge posts and you wish to dispute, you may sign in to alliance.com or call the
+number on the back of your credit card.
+2. Can I dispute a pending charge?
+Credit card: Charge must be posted in order for a dispute to be opened. Pending"",
+
+""you can dispute it online.
+3. How long do I have to dispute a charge?
+Submit your dispute within 60 days of the transaction first appearing on your
+
+statement.
+4. How long will it take to resolve a dispute?"",
+
+""investigated?
+You are not required to pay for transactions and associated interest or fees that are
+being disputed and under investigation. While the transaction is in dispute, this""]","You cannot dispute a pending charge. The charge must be posted to your account before a dispute can be initiated. Once the charge is posted, you may submit your dispute online or by calling the number on the back of your credit card.","Charge must be posted in order for a dispute to be opened. Pending
+charges generally post within 1-3 business days.
+"
+Q_3,Will I have access to the disputed funds while the debit card dispute is being investigated?,"[""your remaining undisputed balance.
+7. Will I have access to the disputed funds while the debit card dispute is being
+investigated?
+Most of the time, a provisional credit will be applied to the account while we"",
+
+""investigated?
+You are not required to pay for transactions and associated interest or fees that are
+being disputed and under investigation. While the transaction is in dispute, this"",
+
+""investigate the debit card dispute. This usually occurs within 48 hours but may take up
+to 10 business days.""]","Most of the time, a provisional credit will be applied to your account while ALLIANCE Bank investigates a debit card dispute. This usually happens within 48 hours but may take up to 10 business days. You are generally not required to pay for disputed transactions or associated fees while the investigation is ongoing.","Most of the time, a provisional credit will be applied to the account while we investigate the debit card dispute. This usually occurs within 48 hours but may take up to 10 business days"
+Q_4,How long will it take to resolve a dispute,"[""4. How long will it take to resolve a dispute?
+The time it takes to resolve your dispute depends on the type of dispute and the
+merchant, but it may take up to 90 days for credit card and/or debit card disputes."",
+
+""you can dispute it online.
+3. How long do I have to dispute a charge?
+Submit your dispute within 60 days of the transaction first appearing on your
+
+statement.
+4. How long will it take to resolve a dispute?"",
+
+""Keep in mind, disputes are often resolved more quickly if you contact the    
+merchant first.
+5. Can I cancel a dispute I already submitted?""]",The time it takes to resolve a dispute at ALLIANCE Bank depends on the type of dispute and the merchant involved. It may take up to 90 days for credit card or debit card disputes to be resolved. Disputes are often resolved more quickly if you contact the merchant first.,"The time it takes to resolve your dispute depends on the type of dispute and the
+merchant, but it may take up to 90 days for credit card and/or debit card disputes.
+Keep in mind, disputes are often resolved more quickly if you contact the
+merchant first."
+Q_5,Where is ALLIANCE Bank located,"[""ALLIANCE BANK’s GENERAL INFORMATION AND POLICIES
+
+1. Where is ALLIANCE Bank located?
+• ALLIANCE Bancorp is a global company, and our headquarters are
+located at 734 Nicollet Mall in Minneapolis. You may also recognize our "",
+
+""• We also have a significant international presence, with employees
+located in 13 countries. ALLIANCE Bank subsidiary Elavon, for example,       
+is one of the largest merchant acquirers in Europe, processing payments "",
+
+""customers are located across the country and opt to bank via the
+ALLIANCE Bank Mobile App. In fact, more than 80% of consumer
+transactions and 65% of loan sales are now completed digitally.""","ALLIANCE Bank’s headquarters are located at 734 Nicollet Mall in Minneapolis. The bank also has a significant international presence, operating in 13 countries. Many customers across the country bank digitally using the ALLIANCE Bank Mobile App.","ALLIANCE Bancorp is a global company, and our headquarters are located at 734 Nicollet Mall in Minneapolis. You may also recognize our name from ALLIANCE Bank Stadium®, which is about a mile from our headquarters and hosts various sports and entertainment events, including Super Bowl LII and the NCAA men’s basketball 2019 Final Four."
+Q_6,What products and services does the Bank offer?,"[""for many of the best-known retailers, restaurants, hotels and small- and     
+medium-sized businesses on the continent.
+2. What products and services does the Bank offer?
+• We offer a wide range of financial products, services and tools to"",
+
+""customers with a blend of human expertise and leading digital
+innovation. Our Mobile App, for example, has provided 2 billion
+personalized insights to customers about spending trends, saving
+opportunities and more."",
+
+""employee is new to the workforce, an experienced professional or a
+proven leader, their voice makes us stronger as we continue to innovate      
+and improve the customer experience. Visit  to find opportunities""]","ALLIANCE Bank offers a wide range of financial products, services, and tools, supported by both expert staff and digital innovations. Examples include personalized insights about spending trends and saving opportunities through their Mobile App. For more specific details or information about individual products, please specify the category you are interested in (such as personal banking, business banking, loans, credit cards, or investments).","We offer a wide range of financial products, services and tools to individuals, families, small- and mid-sized businesses, large companies, governmental agencies and institutions. From checking accounts and voice banking to card readers and corporate bonds, we aim to serve customers with a blend of human expertise and leading digital innovation. "
+Q_7,Working hours in holidays?,"[""including undergraduate and graduate student internships.
+4. Working hours at all branches:
+Mon – Fri: 9:00AM – 6:00PM
+Sat, Sun, holidays: 9:00AM-12:00PM"",
+
+""opportunities and more.
+3. What is it like to work at the Bank?
+• Our more than 70,000 employees come from all kinds of personal and
+professional backgrounds, and each person’s career path is a unique"",
+
+""customers are located across the country and opt to bank via the
+ALLIANCE Bank Mobile App. In fact, more than 80% of consumer
+transactions and 65% of loan sales are now completed digitally.""]","ALLIANCE Bank branches are open on holidays from 9:00 AM to 12:00 PM. Regular weekday hours are 9:00 AM to 6:00 PM, and weekend hours are the same as holidays. For specific holiday schedules, it may be best to confirm with your local branch.",9:00AM-12:00PM
+Q_8,"I forget my password, what should I do","[""follow the instructions given. You'll need to have some ID ready to prove that it's really
+you.
+We’ll send you an SMS to let you know once your ID has been verified and your
+
+passcode can be reset.
+2. Lost, stolen or damaged card"",
+
+""TECHNICAL ISSUES RELATED TO BANKING APPS
+1. Forgot login details
+If you've forgotten your passcode, you'll need to reset it to get back into the app. To do
+this, open the app and tap the 'Forgot passcode?' button on the login screen, then"",
+
+""minutes to reset the SIM – you'll then need to request a new one-time passcode""]","If you have forgotten your password, open the ALLIANCE Bank app and tap the 'Forgot passcode?' button on the login screen. Follow the instructions provided—you'll need to have some ID ready for verification. Once your ID is verified, you will receive an SMS allowing you to reset your passcode.","If you've forgotten your passcode, you'll need to reset it to get back into the app. To do this, open the app and tap the 'Forgot passcode?' button on the login screen, then follow the instructions given. You'll need to have some ID ready to prove that it's really you. We’ll send you an SMS to let you know once your ID has been verified and your passcode can be reset"
+Q_9,My card is damaged and it doesn't work,"[""2. Lost, stolen or damaged card
+If your card is lost, stolen or damaged, you can easily freeze or replace it in the app.
+You can also freeze or replace your card details if you're worried someone you don't
+trust has got hold of them."",
+
+""follow the instructions given. You'll need to have some ID ready to prove that it's really
+you.
+We’ll send you an SMS to let you know once your ID has been verified and your
+
+passcode can be reset.
+2. Lost, stolen or damaged card"",
+
+""To cancel a dispute, call the number on the back of your card. We also accept operator
+relay calls.
+6. Do I have to pay the disputed amount while the credit card dispute is being
+investigated?""]","If your card is damaged and doesn't work, you can easily request a replacement using the ALLIANCE Bank app. Simply open the app and follow the instructions to freeze or replace your card. You may need to provide some ID for verification. If you need further help, you can also contact the bank directly for assistance.","Replacing your card or card details
+1.	Open the Alliance app and tap on the card on Home
+2.	Tap 'Manage card'
+3.	Tap 'Replace card or card details' and follow the steps
+4.	Once you're done, we'll send you a new card or instantly generate new card details for you
+If you can't get access the app, you can contact us and ask us to freeze or replace your card for you."
+Q_10,Can I install Alliance on multiple devices?,"[""more than one device registered to use Alliance. This means if you do install the app
+and log in on another device, the app will be unregistered on the old device. While you"",
+
+""details for you
+If you can't get access the app, you can contact us and ask us to freeze or replace your
+card for you.
+3. Can I install Alliance on another device?
+While you can install the app on another device, it's currently not possible to have"",
+
+""II. Changing your contact details
+If you want to change your email, phone number or home address, you can do so from
+the Alliance mobile app:
+1. Tap the profile icon in the top left corner of the 'Home' section
+2. Tap ‘See details’""]","You can install the ALLIANCE Bank app on another device, but it's not possible to have more than one device registered for use at the same time. If you log in on a new device, the app will be unregistered from your old device.","While you can install the app on another device, it's currently not possible to have more than one device registered to use Alliance. This means if you do install the app and log in on another device, the app will be unregistered on the old device. While you can continue to switch, please be aware that you will have to go through a new device login journey each time."
+Q_11,I don't receive a verification email,"[""shouldn't take too long and you can get back into the app after then.        
+5. Verification emails and one-time passcodes
+Verification email hasn't arrived
+Waiting on a verification email? Here's what to do:
+• check that your email address is correct"",
+
+""custom) email address, you'll either need to provide us with a different one, or
+contact your company or email service provider and ask them to mark
+mail@support.Alliance.co.uk as a safe sender.
+6. One-time passcode (OTP) hasn't come through"",
+
+""information about yourself as well as submitting some documents for verification.""]","If you haven't received your verification email, please try the following steps:
+- Check that your email address is correct.
+- Look in your spam or junk folder.
+- If you are using a corporate or custom email address, contact your email provider or IT team and ask them to mark mail@support.Alliance.co.uk as a safe sender.
+
+If you have confirmed your email and still do not receive the verification email, please contact ALLIANCE Bank for further assistance.","•	check that your email address is correct
+•	check your spam and junk folders – if you find the email in there, please mark it as ""not spam""
+•	check that your mailbox has enough space to receive new emails – you might need to delete a few to make room for new ones
+•	Add mail@support.Alliance.co.uk to your contacts list
+If you entered a work or custom domain email address
+In some cases, emails get blocked by internal systems. If you've used a work (or custom) email address, you'll either need to provide us with a different one, or contact your company or email service provider and ask them to mark mail@support.Alliance.co.uk as a safe sender."
+Q_12,What is the working environment at the bank?,"[""opportunities and more.
+3. What is it like to work at the Bank?
+• Our more than 70,000 employees come from all kinds of personal and
+professional backgrounds, and each person’s career path is a unique"",
+
+""customers are located across the country and opt to bank via the
+ALLIANCE Bank Mobile App. In fact, more than 80% of consumer
+transactions and 65% of loan sales are now completed digitally."",
+
+""including undergraduate and graduate student internships.
+4. Working hours at all branches:
+Mon – Fri: 9:00AM – 6:00PM
+Sat, Sun, holidays: 9:00AM-12:00PM""]","ALLIANCE Bank employs over 70,000 people from diverse personal and professional backgrounds. The bank values unique career paths and aims to create a strong, inclusive, and innovative work environment. The culture supports both traditional and digital banking, with many customer interactions handled through digital channels. There are opportunities for undergraduate and graduate students as well.","Our more than 70,000 employees come from all kinds of personal and professional backgrounds, and each person’s career path is a unique journey. The varied perspectives and empowered voices of our employees are our proudest strengths as an organization. Visit  to find opportunities including undergraduate and graduate student internships."

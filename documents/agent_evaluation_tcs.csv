@@ -1,0 +1,10 @@
+﻿id,question,expected_tool_call,param_name,param_value,user_goal
+Q_1,"My email is outdated, I want to update it to abc123@gmail.com",update_bank_account,account_number; email,3423346; abc123@gmail.com,Email is updated successfully
+Q_2,"My phone needs to be changed to a new one, its numbers are 8986354456",update_bank_account,account_number; phone_number,3423346; 8986354456,Phone number is updated successfully
+Q_3,"Can you change my mailing address? The new one is 123 14th St S, Birmingham, AL",update_bank_account,account_number; address,"3423346; 123 14th St S, Birmingham, AL",Mailing address is updated successfully
+Q_4,My account balance?,account_balance,account_number,3423346,Account balance is returned to user
+Q_5,How much do I have in my account?,account_balance,account_number,3423346,Account balance is returned to user
+Q_6,I want to check my transactions from Apr 01 2025 to Dec 31 2025,get_list_transactions,account_number; start_date; end_date,3423346; 2025-04-01;  2025-12-31,List of transactions is returned to user
+Q_7,"I want to dispute one transaction. The date time is May 4th 2025  13:00:30, receiver's first name Watson and last name is Castillo. The transfered amount is $345",disputeTrans,account_number; transfer_date_time; receiver_firstname; receiver_lastname; transfer_amount,3423346; 2025-05-04 13:00:30;  Watson; Castillo; 345,Given transaction is disputed successfully
+Q_8,Need information on transactions from May 01 2025 to Aug 01 2025,get_list_transactions,account_number; start_date; end_date,3423346; 2025-05-01;  2025-08-01,List of transactions is returned to user
+Q_9,"Need to cancel my transaction. The date time is Jun 1st 2025  15:45:30, receiver's first name Brooks and last name is Alvarez. The transfered amount is $120",disputeTrans,account_number; transfer_date_time; receiver_firstname; receiver_lastname; transfer_amount,3423346; 2025-06-01 15:45:30;  Brooks; Alvarez; 120,Given transaction is disputed successfully
