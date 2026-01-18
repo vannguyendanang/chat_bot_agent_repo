@@ -40,7 +40,7 @@ from ragas.metrics import (
 
 # from ragas.metrics.collections import context_precision
 INPUT_CSV = "retrieval_layer_tcs.csv"
-INPUT_JSONL = "retrieval_layer_tcs.jsonl"
+# INPUT_JSONL = "retrieval_layer_tcs.jsonl"
 OUTPUT_CSV = "retrieval_layer_test_result.csv"
 
 docs_dir = Path(os.getenv("DOCS_DIR", Path(__file__).resolve().parent.parent / "documents"))
@@ -86,19 +86,7 @@ for _, csv_row in input_df.iterrows():
             "reference": csv_row["ground_truth"]
         }
     )
-# input_df.to_json(
-#     str(docs_dir/INPUT_JSONL),
-#     orient="records",
-#     lines=True,
-#     force_ascii=False
-# )
-# convert string list into Python list object
-# input_df["contexts"] = input_df["contexts"].apply(eval)
-# input_df["ground_truths"] = input_df["ground_truths"].apply(eval)
 
-# convert json dataset to HF dataset and use this file as training set
-# dataset = Dataset.from_pandas(input_df)
-# dataset = load_dataset("json", data_files=str(docs_dir/INPUT_JSONL))["train"]
 dataset = Dataset.from_list(hf_row)
 
 df = dataset.to_pandas()
