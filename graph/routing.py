@@ -1,7 +1,8 @@
 # from langchain.schema import HumanMessage, AIMessage
 from langgraph.prebuilt import tools_condition
 # from tools.constants import END
-from tool_definition.to_bank_account_assistant import ToBankAccountAssistant
+from tool_definition.to_bank_account_update import ToBankAccountUpdate
+from tool_definition.to_bank_account_balance import ToBankAccountBalance
 from tool_definition.to_get_list_transaction import ToGetListTransaction
 from tool_definition.to_dispute_transaction import ToDisputeTransaction
 from langgraph.graph import END
@@ -37,7 +38,7 @@ class Routing:
         tool_calls = state["messages"][-1].tool_calls
         if tool_calls:
             # If the tool name matches ToBankAccountAssistant, it routes to a node called "enter_bank_account".
-            if tool_calls[0]["name"] == ToBankAccountAssistant.__name__:
+            if tool_calls[0]["name"] == ToBankAccountUpdate.__name__ or tool_calls[0]["name"] == ToBankAccountBalance.__name__:
                 return "enter_bank_account"
             elif tool_calls[0]["name"] in (ToGetListTransaction.__name__, ToDisputeTransaction.__name__):
                 return "enter_transaction"
