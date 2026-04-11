@@ -9,12 +9,16 @@ from tools.pdf_tool import PDFTool
 from tools.support_phone import SupportPhone
 from tools.account_tool import AccountTool
 from tools.transaction_tool import TransactionTool
+from tools.escalate_to_human import HumanEscalation
 from models.assistant import Assistant
 from app.utility import Utility
-from tool_definition.to_bank_account_assistant import ToBankAccountAssistant
+from tool_definition.to_bank_account_update import ToBankAccountUpdate
+from tool_definition.to_bank_account_balance import ToBankAccountBalance
 from tool_definition.to_get_list_transaction import ToGetListTransaction
 from tool_definition.to_dispute_transaction import ToDisputeTransaction
 from tool_definition.complete_or_escalate import CompleteOrEscalate
+from tool_definition.to_escalate_to_human import ToEscalateToHuman
+from tool_definition.to_check_transaction_exist import ToCheckTransactionExist
 from models.prompts import Prompts
 from graph.routing import Routing 
 from graph.state import State
@@ -99,8 +103,11 @@ class Graph:
         bank_tool = [update_bank_account_tool, account_balance_tool]
 
         transaction_obj = TransactionTool()
-        list_transaction_tool, dispute_transaction_tool = transaction_obj.get_tool()
-        transaction_tool = [list_transaction_tool, dispute_transaction_tool]
+        escalation_obj = HumanEscalation()
+        escalation_to_human_tool = escalation_obj.get_tool()
+
+        list_transaction_tool, check_trans_exist, dispute_transaction_tool = transaction_obj.get_tool()
+        transaction_tool = [policy_tool, list_transaction_tool, check_trans_exist, dispute_transaction_tool, escalation_to_human_tool]
 
         model = Model()
         llm = model.get_llm()
@@ -111,7 +118,7 @@ class Graph:
         self.primary_agent: Runnable = Prompts.get_primary_prompt() | llm.bind_tools(self.primary_assistant_tool + 
                 # each of these classes represents a tool that the primary assistant can use to delegate specific tasks
                 # By extending the tool list in this way, the assistant gains the ability to route user requests to the specialized workflow.                                          
-                [ToBankAccountAssistant, ToGetListTransaction, ToDisputeTransaction])
+                [ToBankAccountBalance, ToBankAccountUpdate, ToGetListTransaction, ToDisputeTransaction, ToEscalateToHuman, ToCheckTransactionExist])
 
         # set sensitive tools for bank account agent
         self.bank_account_sensitive_tools = [update_bank_account_tool]
@@ -123,12 +130,19 @@ class Graph:
         )
 
         self.transaction_sensitive_tools = [dispute_transaction_tool]
-        self.transaction_safe_tools = [list_transaction_tool]
+        self.transaction_safe_tools = [list_transaction_tool, check_trans_exist, policy_tool, escalation_to_human_tool]
         self.account_transaction_runnable = Prompts.get_transaction_prompt() | llm.bind_tools(
             transaction_tool + [CompleteOrEscalate]
         )
 
-        self.safe_tools = [account_balance_tool, list_transaction_tool]
+        # --- DEBUG: print transaction prompt ---
+        # result = Prompts.get_transaction_prompt().invoke({"messages": [], "user_info": "3423346"})
+        # print("=== TRANSACTION PROMPT ===")
+        # print(result.messages[0].content)
+        # print("==========================\n")
+        # --- END DEBUG ---
+
+        self.safe_tools = [account_balance_tool, list_transaction_tool, check_trans_exist, policy_tool, escalation_to_human_tool]
 
 
     
@@ -272,13 +286,13 @@ class Graph:
         
             
         # Get the PNG bytes from the graph
-        # png_bytes = mygraph.get_graph(xray=True).draw_mermaid_png()
+        png_bytes = mygraph.get_graph(xray=True).draw_mermaid_png()
 
         # # Save to file
-        # output_path = "graph_visualization.png"
-        # with open(output_path, "wb") as f:
-        #     f.write(png_bytes)
+        output_path = "graph_visualization.png"
+        with open(output_path, "wb") as f:
+            f.write(png_bytes)
 
-        # print(f"Graph saved to: {output_path}")
+        print(f"Graph saved to: {output_path}")
 
         return mygraph

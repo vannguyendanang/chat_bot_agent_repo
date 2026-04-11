@@ -6,7 +6,7 @@ load_dotenv()  # loads .env from the current working directory or parents
 from app.constants import Constants
 import logging, sys
 from tools.user_login import UserLogin
-
+import re
 
 
 def setup_logging():
@@ -99,6 +99,12 @@ def _content(m: Any) -> str:
                 parts.append(str(blk))
         return "\n".join(p for p in parts if p)
     return str(c)
+
+def extract_answer(response: str) -> str:
+    match = re.search(r'<answer>(.*?)</answer>', response, re.DOTALL)
+    if match:
+        return match.group(1).strip()  # Tags found → strip them
+    return response  # No tags → return as is
 
 # Declares a lifespan context manager; FastAPI calls this on startup and shutdown.
 @asynccontextmanager
@@ -233,6 +239,9 @@ def send_turn(question: str, session_id: str, compiled, config) -> Dict[str, Any
         if tool_ai:
             PENDING[session_id] = tool_ai.tool_calls[0]["id"]
 
+    # strip the <answer> tag before return
+    last_ai = extract_answer(last_ai)
+    
     return {"reply": last_ai, "awaiting_approval": awaiting}
 
 # define endpoint "send" which receives JSON from UI and returns JSON back

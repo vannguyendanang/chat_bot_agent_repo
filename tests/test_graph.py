@@ -50,7 +50,8 @@ def main():
 
     # question = "I want to dispute my transaction"
     # question = "The date time is May 4th 2025 1:00:30 PM, receiver's first name Watson and last name is Castillo. The transfered amount is $345"    
-    question = "I want to dispute my transaction. The date time is May 4th 2025  1:00:30 PM, receiver's first name Watson and last name is Castillo. The transfered amount is $345"    
+    # question = "I want to dispute my transaction. The date time is May 4th 2025  1:00:30 PM, receiver's first name Watson and last name is Castillo. The transfered amount is $345"
+    question = "I want to dispute my transaction. The date time is Mar 27th 2026  09:00:30 AM, receiver's first name Bennet and last name is Sanders. The transfered amount is $611"
 
     events = myCompiledGraph.stream(
         {"messages": ("user", question)}, config, 

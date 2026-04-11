@@ -153,6 +153,40 @@ class TransactionTool:
                 conn.close()
 
         @tool
+        def check_trans_exist(account_number: str, transfer_date_time: str, receiver_firstname: str, receiver_lastname: str, transfer_amount: int) -> str:
+            """Check if user's transaction exsits""" 
+            conn = self.pool.get_connection()
+            cursor = None
+            log.info("account_number=%s", account_number)
+            try:
+                cursor = conn.cursor()
+                if not account_number or not transfer_date_time or not receiver_firstname or not receiver_lastname or not transfer_amount:
+                    raise ToolException("Account number, transfered date time, receiver's first name, receiver's last name, transfer amount are required.")
+                
+                transfered_dt = TransactionTool._parse_date_time(transfer_date_time)
+                search_query = """
+                    Select TransactionId from banktransaction where AccountNumber = %s and TransDateTime = %s and ReceiverFirstName = %s and 
+                    ReceiverLastName = %s and TransferAmount = %s
+                """
+                search_params = (account_number, transfered_dt, receiver_firstname, receiver_lastname, transfer_amount)
+                # log.debug("Executing search SQL: %s | params=%r", search_query, search_params)
+                # print("Executing search SQL:", search_query, "| params:", search_params)
+
+                cursor.execute(search_query, search_params)
+                result = cursor.fetchone()
+                if not result:
+                    return "No transaction found for the provided information."
+                else:
+                    return result[0]
+            except Exception as e:
+                log.error("Checking transaction is failed.\n%s", traceback.format_exc())
+                raise ToolException(f"Checking transaction is not successful: {e}")
+            finally:
+                if cursor is not None:
+                    cursor.close()
+                conn.close()        
+        
+        @tool
         @traceable(name="sql_dispute_update")
         def disputeTrans(account_number: str, transfer_date_time: str, receiver_firstname: str, receiver_lastname: str, transfer_amount: int) -> str:
             """Dispute user's transaction""" 
@@ -199,4 +233,4 @@ class TransactionTool:
                 if cursor is not None:
                     cursor.close()
                 conn.close()
-        return get_list_transactions, disputeTrans
+        return get_list_transactions, check_trans_exist, disputeTrans
